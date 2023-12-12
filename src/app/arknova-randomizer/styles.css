@@ -1,0 +1,72 @@
+#arknova-randomizer-layout {
+  padding: 10px;
+}
+
+#select-players {
+  margin-bottom: 10px;
+}
+
+#select-players button.MuiToggleButton-root {
+  text-transform: capitalize;
+  opacity: 0.4;
+}
+
+#select-players button.MuiToggleButton-root.Mui-selected {
+  opacity: 1;
+  color: black;
+  /* background-color: #6699FF; */
+}
+
+#select-players button.MuiToggleButton-root .worker-icon {
+  margin-right: 5px;
+}
+
+/**
+  * Worker Icon styles
+  */
+.worker-icon {
+  background-size: cover;
+  background-image: url('/assets/arknova/workers.png');
+}
+
+.worker-icon-medium {
+  width: 36px;
+  height: 36px;
+}
+
+.worker-icon-medium.worker-icon-blue {
+  background-position: -37px 0;
+}
+
+.worker-icon-medium.worker-icon-yellow {
+  background-position: -222px 0;
+}
+
+.worker-icon-medium.worker-icon-red {
+  background-position: -259px 0;
+}
+
+.worker-icon-medium.worker-icon-black {
+  background-position: -111px 0;
+}
+
+.worker-icon-small {
+  width: 30px;
+  height: 30px;
+}
+
+.worker-icon-small.worker-icon-blue {
+  background-position: -30px 0;
+}
+
+.worker-icon-small.worker-icon-yellow {
+  background-position: -184px 0;
+}
+
+.worker-icon-small.worker-icon-red {
+  background-position: -215px 0;
+}
+
+.worker-icon-small.worker-icon-black {
+  background-position: -93px 0;
+}
