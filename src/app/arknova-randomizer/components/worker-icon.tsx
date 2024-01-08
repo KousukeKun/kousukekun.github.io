@@ -1,6 +1,6 @@
 'use client'
 
-import { WorkerColor } from "../types"
+import { WorkerColor } from "../types-consts"
 
 export type WorkerIconProps = {
   color?: WorkerColor

@@ -2,7 +2,7 @@
 
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 import WorkerIcon from './worker-icon'
-import { WorkerColor } from '../types'
+import { WorkerColor } from '../types-consts'
 
 export type MultipleSelectToggleButtonProps = {
   id: string

@@ -2,6 +2,14 @@
   padding: 10px;
 }
 
+#arknova-randomizer-layout .MuiGrid-item {
+  margin-bottom: 18px;
+}
+
+#arknova-randomizer-title {
+  margin-bottom: 27px;
+}
+
 #select-players {
   margin-bottom: 10px;
 }
@@ -14,7 +22,7 @@
 #select-players button.MuiToggleButton-root.Mui-selected {
   opacity: 1;
   color: black;
-  /* background-color: #6699FF; */
+  font-size: 0.8em;
 }
 
 #select-players button.MuiToggleButton-root .worker-icon {
