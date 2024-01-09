@@ -2,8 +2,10 @@
   padding: 10px;
 }
 
-#arknova-randomizer-layout .MuiGrid-item {
+#setup-container .MuiGrid-item {
   margin-bottom: 27px;
+  padding: 10px;
+  border: 1px solid #ccc;
 }
 
 #arknova-randomizer-title {
