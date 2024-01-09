@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   Typography,
   Grid,
@@ -11,7 +11,14 @@ import {
   Radio,
   RadioGroup,
   Button,
+  Dialog,
+  Slide,
+  AppBar,
+  Toolbar,
+  IconButton,
 } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import { TransitionProps } from '@mui/material/transitions'
 import MultipleSelectToggleButton from './components/multiple-select-toggle-button'
 import {
   allWorkerColors,
@@ -21,13 +28,36 @@ import {
   ZooMap,
   // beginnerZooMapsArr,
   advanceZooMapsArr,
+  CompetitiveMode,
+  RandomizeResults,
 } from './types-consts'
 import { SettingsContext } from './settings-context'
 import CheckboxTree from './components/checkbox-tree'
+import { getRandomizeResults, validateSettingsData } from './helpers'
+import WorkerIcon from './components/worker-icon'
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />
+})
 
 export default function ArkNovaRandomizer() {
+  const initResults: RandomizeResults = {
+    playerMaps: [],
+    draftActionCards: [],
+    actionOrder: [],
+    firstPlayer: undefined,
+    conservationProjects: [],
+  }
+  const [results, setResults] = useState<RandomizeResults>(initResults)
 
   const [settings, setSettings] = useState<SettingsType>(defaultSettings)
+
+  const [openResultDialog, setOpenResultDialog] = useState<boolean>(false)
 
   const {
     players,
@@ -40,6 +70,8 @@ export default function ArkNovaRandomizer() {
       newBonusTiles,
     },
   } = settings
+
+  const validationResults = validateSettingsData(settings)
 
   const handleOnChangePlayers = (_event: React.MouseEvent<HTMLElement>, updatedValues: string[]) => {
     setSettings({
@@ -66,7 +98,7 @@ export default function ArkNovaRandomizer() {
     if (checked) {
       setSettings({
         ...settings,
-        competitiveMode: event.target.value as 'normal' | 'same-map',
+        competitiveMode: event.target.value as CompetitiveMode,
       })
     }
   }
@@ -102,7 +134,16 @@ export default function ArkNovaRandomizer() {
   }
 
   const handleRandomize = () => {
-    console.log(settings)
+    setOpenResultDialog(true)
+    const randomizeResults = getRandomizeResults(settings)
+    setResults(randomizeResults)
+
+    console.log(randomizeResults)
+  }
+
+  const handleCloseResultDialog = () => {
+    setOpenResultDialog(false)
+    setResults(initResults)
   }
 
   const contextValue = useMemo(() => ({ settings, setSettings }), [settings, setSettings])
@@ -114,7 +155,7 @@ export default function ArkNovaRandomizer() {
       </Typography>
 
       <Grid container id="setup-container">
-        <Grid item xs={12} md={12} xl={3}>
+        <Grid item xs={12} md={12}>
           <Typography variant="h5" gutterBottom>
             Select Players
           </Typography>
@@ -128,7 +169,7 @@ export default function ArkNovaRandomizer() {
             {players.length} players selected
           </Typography>
         </Grid>
-        <Grid item xs={12} md={4} xl={3}>
+        <Grid item xs={12} md={4}>
           <Typography variant="h5" gutterBottom>
             Marine Worlds Expansion
           </Typography>
@@ -141,13 +182,13 @@ export default function ArkNovaRandomizer() {
               label="New base conservation projects cards"
               control={<Checkbox checked={newBaseConservationCards} onChange={handleOnChangeNewBaseConservationCards} />}
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               label="New bonus tiles"
               control={<Checkbox checked={newBonusTiles} onChange={handleOnChangeNewBonusTiles} />}
-            />
+            /> */}
           </FormGroup>
         </Grid>
-        <Grid item xs={12} md={4} xl={3}>
+        <Grid item xs={12} md={4}>
           <Typography variant="h5" gutterBottom>
             Competitive Mode
           </Typography>
@@ -157,19 +198,19 @@ export default function ArkNovaRandomizer() {
               defaultValue={competitiveMode}
             >
               <FormControlLabel
-                value="normal"
+                value={CompetitiveMode.NORMAL}
                 label="Normal (Get 2 maps and choose 1)"
                 control={<Radio onChange={handleOnChangeCompetitiveMode} />} 
               />
               <FormControlLabel
-                value="same-map"
+                value={CompetitiveMode.SAME_MAP}
                 label="Same map for all players"
                 control={<Radio onChange={handleOnChangeCompetitiveMode} />}
               />
             </RadioGroup>
           </FormControl>
         </Grid>
-        <Grid item xs={12} md={4} xl={3}>
+        <Grid item xs={12} md={4}>
           <Typography variant="h5" gutterBottom>
             Maps
           </Typography>
@@ -188,20 +229,136 @@ export default function ArkNovaRandomizer() {
             onChange={handleOnChangeBeginnerZooMaps}
           /> */}
         </Grid>
-        <Grid item xs={12} md={12} xl={12}>
+        <Grid item xs={12} md={12} style={{ border: 'none' }}>
           <Button
             variant="contained"
             size="large"
             onClick={handleRandomize}
+            disabled={!validationResults.isValid}
           >
             Start Randomize
           </Button>
+          {!validationResults.isValid && (
+            <Typography variant="body2" style={{ color: '#F93', marginTop: '10px' }}>{
+              validationResults.message}
+            </Typography>)}
         </Grid>
       </Grid>
 
-      <Grid container id="result-container">
+      <Dialog
+        fullScreen
+        open={openResultDialog}
+        onClose={handleCloseResultDialog}
+        TransitionComponent={Transition}
+      >
+        <AppBar sx={{ position: 'relative' }}>
+          <Toolbar>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              ArkNova Randomizer - Results
+            </Typography>
+            <IconButton
+              edge="end"
+              color="inherit"
+              onClick={handleCloseResultDialog}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <div style={{ padding: '20px' }}>
+          <Typography variant='h6' style={{ marginBottom: '12px' }}>
+            Player Map
+          </Typography>
+          {results?.playerMaps?.map((mapResult) => (
+            <>
+              <Typography variant="body1" style={{ marginBottom: '8px' }}>
+                <WorkerIcon
+                  color={mapResult.player}
+                  size='small'
+                  style={{ display: 'inline-block', verticalAlign: 'bottom' }}
+                />
+                <span style={{ textTransform: 'capitalize', fontWeight: 700, marginLeft: '8px' }}>{mapResult.player}</span>
+              </Typography>
+              {mapResult.maps.map((m, index) => (<Typography key={`player_map_${index}`} variant="body1">- {m}</Typography>))}
+              <br />
+            </>
+          ))}
+          <br />
+          <hr />
+          <br />
 
-      </Grid>
+          {results?.draftActionCards.length > 0 && (
+          <>
+            <Typography variant='h6' style={{ marginBottom: '12px' }}>
+              Draft Action Cards
+            </Typography>
+            {results?.draftActionCards?.map((result) => (
+              <>
+                <Typography variant="body1" style={{ marginBottom: '8px' }}>
+                  <WorkerIcon
+                    color={result.player}
+                    size='small'
+                    style={{ display: 'inline-block', verticalAlign: 'bottom' }}
+                  />
+                  <span style={{ textTransform: 'capitalize', fontWeight: 700, marginLeft: '8px' }}>{result.player}</span>
+                </Typography>
+                {result.actionCards.map((c, index) => (<Typography key={`draft_action_cards_${index}`} variant="body1">- {c}</Typography>))}
+                <br />
+              </>
+            ))}
+            <br />
+            <hr />
+            <br />
+          </>
+          )}
+
+          <Typography variant='h6' style={{ marginBottom: '12px' }}>
+            Action Card Order
+          </Typography>
+          {results?.actionOrder?.map((result) => (
+            <>
+              <Typography variant="body1" style={{ marginBottom: '8px' }}>
+                <WorkerIcon
+                  color={result.player}
+                  size='small'
+                  style={{ display: 'inline-block', verticalAlign: 'bottom' }}
+                />
+                <span style={{ textTransform: 'capitalize', fontWeight: 700, marginLeft: '8px' }}>{result.player}</span>
+              </Typography>
+              <Typography variant="body1">1 - Animal</Typography>
+              {result.actionOrder.map((o, index) => (<Typography key={`action_card_order_${index}`} variant="body1">{index+2} - {o}</Typography>))}
+              <br />
+            </>
+          ))}
+          <br />
+          <hr />
+          <br />
+
+          <Typography variant='h6' style={{ marginBottom: '12px' }}>
+            First Player
+          </Typography>
+          <Typography variant='body1' style={{ marginBottom: '8px' }}>
+            <WorkerIcon
+                  color={results.firstPlayer}
+                  size='small'
+                  style={{ display: 'inline-block', verticalAlign: 'bottom' }}
+                />
+                <span style={{ textTransform: 'capitalize', fontWeight: 700, marginLeft: '8px' }}>{results.firstPlayer}</span> will be the First player
+          </Typography>
+          <br />
+          <hr />
+          <br />
+
+          <Typography variant='h6' style={{ marginBottom: '12px' }}>
+            Conservation projects
+          </Typography>
+          {results?.conservationProjects.map((cp, index) => (<Typography key={`conservation_project_${index}`} variant="body1">- {cp}</Typography>))}
+          <br />
+          <br />
+          <br />
+        </div>
+      </Dialog>
     </SettingsContext.Provider>
   )
 }
