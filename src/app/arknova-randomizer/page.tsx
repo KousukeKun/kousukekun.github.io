@@ -10,6 +10,7 @@ import {
   Checkbox,
   Radio,
   RadioGroup,
+  Button,
 } from '@mui/material'
 import MultipleSelectToggleButton from './components/multiple-select-toggle-button'
 import {
@@ -100,6 +101,10 @@ export default function ArkNovaRandomizer() {
     })
   }
 
+  const handleRandomize = () => {
+    console.log(settings)
+  }
+
   const contextValue = useMemo(() => ({ settings, setSettings }), [settings, setSettings])
 
   return (
@@ -108,7 +113,7 @@ export default function ArkNovaRandomizer() {
         ArkNova Randomizer
       </Typography>
 
-      <Grid container>
+      <Grid container id="setup-container">
         <Grid item xs={12} md={12} xl={3}>
           <Typography variant="h5" gutterBottom>
             Select Players
@@ -183,6 +188,19 @@ export default function ArkNovaRandomizer() {
             onChange={handleOnChangeBeginnerZooMaps}
           /> */}
         </Grid>
+        <Grid item xs={12} md={12} xl={12}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={handleRandomize}
+          >
+            Start Randomize
+          </Button>
+        </Grid>
+      </Grid>
+
+      <Grid container id="result-container">
+
       </Grid>
     </SettingsContext.Provider>
   )
