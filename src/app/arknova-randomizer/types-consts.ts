@@ -49,10 +49,22 @@ export type SettingsType = {
   players: WorkerColor[]
   advanceZooMaps: ZooMap[]
   beginnerZooMaps: ZooMap[]
+  competitiveMode: 'normal' | 'same-map'
+  marineWorlds: {
+    draftingActionCards: boolean
+    newBaseConservationCards: boolean
+    newBonusTiles: boolean
+  }
 }
 
 export const defaultSettings = {
   players: [ ...allWorkerColors ],
   advanceZooMaps: [ ...advanceZooMapsArr ],
   beginnerZooMaps: [],
+  competitiveMode: 'normal',
+  marineWorlds: {
+    draftingActionCards: true,
+    newBaseConservationCards: true,
+    newBonusTiles: true,
+  }
 } as SettingsType

@@ -4,6 +4,12 @@ import { useState, useMemo } from 'react'
 import {
   Typography,
   Grid,
+  FormGroup,
+  FormControl,
+  FormControlLabel,
+  Checkbox,
+  Radio,
+  RadioGroup,
 } from '@mui/material'
 import MultipleSelectToggleButton from './components/multiple-select-toggle-button'
 import {
@@ -12,7 +18,7 @@ import {
   defaultSettings,
   WorkerColor,
   ZooMap,
-  beginnerZooMapsArr,
+  // beginnerZooMapsArr,
   advanceZooMapsArr,
 } from './types-consts'
 import { SettingsContext } from './settings-context'
@@ -22,7 +28,17 @@ export default function ArkNovaRandomizer() {
 
   const [settings, setSettings] = useState<SettingsType>(defaultSettings)
 
-  const { players, beginnerZooMaps, advanceZooMaps } = settings
+  const {
+    players,
+    // beginnerZooMaps,
+    advanceZooMaps,
+    competitiveMode,
+    marineWorlds : {
+      draftingActionCards,
+      newBaseConservationCards,
+      newBonusTiles,
+    },
+  } = settings
 
   const handleOnChangePlayers = (_event: React.MouseEvent<HTMLElement>, updatedValues: string[]) => {
     setSettings({
@@ -38,10 +54,49 @@ export default function ArkNovaRandomizer() {
     })
   }
 
-  const handleOnChangeBeginnerZooMaps = (_event: React.ChangeEvent<HTMLInputElement>, updatedValues: string[]) => {
+  // const handleOnChangeBeginnerZooMaps = (_event: React.ChangeEvent<HTMLInputElement>, updatedValues: string[]) => {
+  //   setSettings({
+  //     ...settings,
+  //     beginnerZooMaps: updatedValues as ZooMap[],
+  //   })
+  // }
+
+  const handleOnChangeCompetitiveMode = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    if (checked) {
+      setSettings({
+        ...settings,
+        competitiveMode: event.target.value as 'normal' | 'same-map',
+      })
+    }
+  }
+
+  const handleOnChangeDraftingActionCards = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setSettings({
       ...settings,
-      beginnerZooMaps: updatedValues as ZooMap[],
+      marineWorlds: {
+        ...settings.marineWorlds,
+        draftingActionCards: checked,
+      },
+    })
+  }
+
+  const handleOnChangeNewBaseConservationCards = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    setSettings({
+      ...settings,
+      marineWorlds: {
+        ...settings.marineWorlds,
+        newBaseConservationCards: checked,
+      },
+    })
+  }
+
+  const handleOnChangeNewBonusTiles = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    setSettings({
+      ...settings,
+      marineWorlds: {
+        ...settings.marineWorlds,
+        newBonusTiles: checked,
+      },
     })
   }
 
@@ -54,7 +109,7 @@ export default function ArkNovaRandomizer() {
       </Typography>
 
       <Grid container>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={12} xl={3}>
           <Typography variant="h5" gutterBottom>
             Select Players
           </Typography>
@@ -68,24 +123,65 @@ export default function ArkNovaRandomizer() {
             {players.length} players selected
           </Typography>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={4} xl={3}>
           <Typography variant="h5" gutterBottom>
-            Map Settings
+            Marine Worlds Expansion
+          </Typography>
+          <FormGroup>
+            <FormControlLabel
+              label="Drafting new Action Cards"
+              control={<Checkbox checked={draftingActionCards} onChange={handleOnChangeDraftingActionCards} />}
+            />
+            <FormControlLabel
+              label="New base conservation projects cards"
+              control={<Checkbox checked={newBaseConservationCards} onChange={handleOnChangeNewBaseConservationCards} />}
+            />
+            <FormControlLabel
+              label="New bonus tiles"
+              control={<Checkbox checked={newBonusTiles} onChange={handleOnChangeNewBonusTiles} />}
+            />
+          </FormGroup>
+        </Grid>
+        <Grid item xs={12} md={4} xl={3}>
+          <Typography variant="h5" gutterBottom>
+            Competitive Mode
+          </Typography>
+          <FormControl>
+            <RadioGroup
+              value={competitiveMode}
+              defaultValue={competitiveMode}
+            >
+              <FormControlLabel
+                value="normal"
+                label="Normal (Get 2 maps and choose 1)"
+                control={<Radio onChange={handleOnChangeCompetitiveMode} />} 
+              />
+              <FormControlLabel
+                value="same-map"
+                label="Same map for all players"
+                control={<Radio onChange={handleOnChangeCompetitiveMode} />}
+              />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} md={4} xl={3}>
+          <Typography variant="h5" gutterBottom>
+            Maps
           </Typography>
           <CheckboxTree
             id="select-advance-maps"
-            rootLabel="Advance Maps"
+            rootLabel="All Advance Maps"
             items={advanceZooMapsArr}
             selectedValues={advanceZooMaps}
             onChange={handleOnChangeAdvanceZooMaps}
           />
-          <CheckboxTree
+          {/* <CheckboxTree
             id="select-advance-maps"
             rootLabel="Beginner Maps"
             items={beginnerZooMapsArr}
             selectedValues={beginnerZooMaps}
             onChange={handleOnChangeBeginnerZooMaps}
-          />
+          /> */}
         </Grid>
       </Grid>
     </SettingsContext.Provider>
