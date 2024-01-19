@@ -155,7 +155,7 @@ export default function ArkNovaRandomizer() {
       </Typography>
 
       <Grid container id="setup-container">
-        <Grid item xs={12} md={12}>
+        <Grid item xs={12} md={12} id="select-players-box">
           <Typography variant="h5" gutterBottom>
             Select Players
           </Typography>

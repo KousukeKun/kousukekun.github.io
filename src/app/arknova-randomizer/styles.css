@@ -8,6 +8,11 @@
   border: 1px solid #ccc;
 }
 
+#setup-container #select-players-box.MuiGrid-item {
+  border: none;
+  padding: 0;
+}
+
 #arknova-randomizer-title {
   margin-bottom: 27px;
 }
@@ -24,7 +29,7 @@
 #select-players button.MuiToggleButton-root.Mui-selected {
   opacity: 1;
   color: black;
-  font-size: 0.8em;
+  font-size: 0.75em;
 }
 
 #select-players button.MuiToggleButton-root .worker-icon {
